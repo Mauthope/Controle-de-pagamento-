@@ -4,32 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário de Cronoanálise</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        button {
-            padding: 5px 10px;
-            margin: 2px;
-        }
-        img {
-            width: 100px;
-            display: none;
-        }
-        #chartContainer {
-            width: 80%;
-            margin: 20px auto;
-        }
-    </style>
+   <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: white;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    button {
+        padding: 8px 16px;
+        margin: 4px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        color: white;
+    }
+
+    button[onclick*="startTimer"] {
+        background-color: #4CAF50; /* Verde para o botão Start */
+    }
+
+    button[onclick*="stopTimer"] {
+        background-color: #f44336; /* Vermelho para o botão Stop */
+    }
+
+    button:hover {
+        opacity: 0.8;
+    }
+
+    img {
+        width: 100px;
+        display: none;
+    }
+
+    #chartContainer {
+        width: 80%;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
     <!-- Adicionando a biblioteca Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
