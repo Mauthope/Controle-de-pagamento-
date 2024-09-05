@@ -1,267 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Pagamento de Imóvel</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-color: #f4f4f9;
-    }
-
-    .container {
-      background-color: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
-
-    h1,
-    h2 {
-      color: #333;
-    }
-
-    label {
-      display: block;
-      margin: 10px 0 5px;
-      color: #555;
-    }
-
-    input,
-    button {
-      padding: 10px;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    button {
-      background-color: #5cb85c;
-      color: white;
-      border: none;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background-color: #4cae4c;
-    }
-
-    .checkbox-group {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    .checkbox-group div {
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-
-    .amortization-list {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    .amortization-list li {
-      background-color: #eee;
-      padding: 10px;
-      margin: 5px 0;
-      border-radius: 4px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .delete-btn {
-      background-color: #d9534f;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 4px;
-      width: 56px;
-      /* Aproximadamente 2 cm */
-    }
-
-    .delete-btn:hover {
-      background-color: #c9302c;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Cronoanálise com Dashboard</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            padding: 5px 10px;
+            margin: 2px;
+        }
+        img {
+            width: 100px;
+            display: none;
+        }
+        #chartContainer {
+            width: 80%;
+            margin: 20px auto;
+        }
+    </style>
+    <!-- Adicionando a biblioteca Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
-  <h1>Controle de Pagamento de Imóvel</h1>
+    <h1>Formulário de Cronoanálise com Dashboard</h1>
+    <form id="cronoanalise-form">
+        <table>
+            <thead>
+                <tr>
+                    <th>Atividade</th>
+                    <th>Foto</th>
+                    <th>Start</th>
+                    <th>Stop</th>
+                    <th>Cronômetro 1</th>
+                    <th>Cronômetro 2</th>
+                    <th>Cronômetro 3</th>
+                    <th>Cronômetro 4</th>
+                    <th>Cronômetro 5</th>
+                    <th>Soma do Tempo</th>
+                    <th>Melhorias</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 10 Linhas do formulário -->
+                ${[...Array(10)].map((_, i) => `
+                <tr>
+                    <td><input type="text" id="atividade${i+1}" placeholder="Descreva a atividade"></td>
+                    <td><button type="button" onclick="capturePhoto(${i+1})">Foto</button><img id="foto${i+1}"></td>
+                    <td><button type="button" onclick="startTimer(${i+1})">Start</button></td>
+                    <td><button type="button" onclick="stopTimer(${i+1})">Stop</button></td>
+                    <td><span id="cronometro${i+1}_1">0:00</span></td>
+                    <td><span id="cronometro${i+1}_2">0:00</span></td>
+                    <td><span id="cronometro${i+1}_3">0:00</span></td>
+                    <td><span id="cronometro${i+1}_4">0:00</span></td>
+                    <td><span id="cronometro${i+1}_5">0:00</span></td>
+                    <td><span id="somaTempo${i+1}">0:00</span></td>
+                    <td><input type="text" placeholder="Sugestões de melhoria"></td>
+                </tr>
+              <tr>
+                    <td><input type="text" id="atividade${i+2}" placeholder="Descreva a atividade"></td>
+                    <td><button type="button" onclick="capturePhoto(${i+2})">Foto</button><img id="foto${i+2}"></td>
+                    <td><button type="button" onclick="startTimer(${i+2})">Start</button></td>
+                    <td><button type="button" onclick="stopTimer(${i+2})">Stop</button></td>
+                    <td><span id="cronometro${i+2}_1">0:00</span></td>
+                    <td><span id="cronometro${i+2}_2">0:00</span></td>
+                    <td><span id="cronometro${i+2}_3">0:00</span></td>
+                    <td><span id="cronometro${i+2}_4">0:00</span></td>
+                    <td><span id="cronometro${i+2}_5">0:00</span></td>
+                    <td><span id="somaTempo${i+2}">0:00</span></td>
+                    <td><input type="text" placeholder="Sugestões de melhoria"></td>
+                </tr>
+              <tr>
+                    <td><input type="text" id="atividade${i+3}" placeholder="Descreva a atividade"></td>
+                    <td><button type="button" onclick="capturePhoto(${i+3})">Foto</button><img id="foto${i+3}"></td>
+                    <td><button type="button" onclick="startTimer(${i+3})">Start</button></td>
+                    <td><button type="button" onclick="stopTimer(${i+3})">Stop</button></td>
+                    <td><span id="cronometro${i+3}_1">0:00</span></td>
+                    <td><span id="cronometro${i+3}_2">0:00</span></td>
+                    <td><span id="cronometro${i+3}_3">0:00</span></td>
+                    <td><span id="cronometro${i+3}_4">0:00</span></td>
+                    <td><span id="cronometro${i+3}_5">0:00</span></td>
+                    <td><span id="somaTempo${i+3}">0:00</span></td>
+                    <td><input type="text" placeholder="Sugestões de melhoria"></td>
+                </tr>
+              <tr>
+                    <td><input type="text" id="atividade${i+4}" placeholder="Descreva a atividade"></td>
+                    <td><button type="button" onclick="capturePhoto(${i+4})">Foto</button><img id="foto${i+4}"></td>
+                    <td><button type="button" onclick="startTimer(${i+4})">Start</button></td>
+                    <td><button type="button" onclick="stopTimer(${i+4})">Stop</button></td>
+                    <td><span id="cronometro${i+4}_1">0:00</span></td>
+                    <td><span id="cronometro${i+4}_2">0:00</span></td>
+                    <td><span id="cronometro${i+4}_3">0:00</span></td>
+                    <td><span id="cronometro${i+4}_4">0:00</span></td>
+                    <td><span id="cronometro${i+4}_5">0:00</span></td>
+                    <td><span id="somaTempo${i+4}">0:00</span></td>
+                    <td><input type="text" placeholder="Sugestões de melhoria"></td>
+                </tr>
+              <tr>
+                    <td><input type="text" id="atividade${i+5}" placeholder="Descreva a atividade"></td>
+                    <td><button type="button" onclick="capturePhoto(${i+5})">Foto</button><img id="foto${i+5}"></td>
+                    <td><button type="button" onclick="startTimer(${i+5})">Start</button></td>
+                    <td><button type="button" onclick="stopTimer(${i+5})">Stop</button></td>
+                    <td><span id="cronometro${i+5}_1">0:00</span></td>
+                    <td><span id="cronometro${i+5}_2">0:00</span></td>
+                    <td><span id="cronometro${i+5}_3">0:00</span></td>
+                    <td><span id="cronometro${i+5}_4">0:00</span></td>
+                    <td><span id="cronometro${i+5}_5">0:00</span></td>
+                    <td><span id="somaTempo${i+5}">0:00</span></td>
+                    <td><input type="text" placeholder="Sugestões de melhoria"></td>
+                </tr>
+              <tr>
+                    <td><input type="text" id="atividade${i+6}" placeholder="Descreva a atividade"></td>
+                    <td><button type="button" onclick="capturePhoto(${i+6})">Foto</button><img id="foto${i+6}"></td>
+                    <td><button type="button" onclick="startTimer(${i+6})">Start</button></td>
+                    <td><button type="button" onclick="stopTimer(${i+6})">Stop</button></td>
+                    <td><span id="cronometro${i+6}_1">0:00</span></td>
+                    <td><span id="cronometro${i+6}_2">0:00</span></td>
+                    <td><span id="cronometro${i+6}_3">0:00</span></td>
+                    <td><span id="cronometro${i+6}_4">0:00</span></td>
+                    <td><span id="cronometro${i+6}_5">0:00</span></td>
+                    <td><span id="somaTempo${i+6}">0:00</span></td>
+                    <td><input type="text" placeholder="Sugestões de melhoria"></td>
+                </tr>
+              <tr>
+                    <td><input type="text" id="atividade${i+7}" placeholder="Descreva a atividade"></td>
+                    <td><button type="button" onclick="capturePhoto(${i+7})">Foto</button><img id="foto${i+7}"></td>
+                    <td><button type="button" onclick="startTimer(${i+7})">Start</button></td>
+                    <td><button type="button" onclick="stopTimer(${i+7})">Stop</button></td>
+                    <td><span id="cronometro${i+7}_1">0:00</span></td>
+                    <td><span id="cronometro${i+7}_2">0:00</span></td>
+                    <td><span id="cronometro${i+7}_3">0:00</span></td>
+                    <td><span id="cronometro${i+7}_4">0:00</span></td>
+                    <td><span id="cronometro${i+7}_5">0:00</span></td>
+                    <td><span id="somaTempo${i+7}">0:00</span></td>
+                    <td><input type="text" placeholder="Sugestões de melhoria"></td>
+                </tr>
+              <tr>
+                    <td><input type="text" id="atividade${i+8}" placeholder="Descreva a atividade"></td>
+                    <td><button type="button" onclick="capturePhoto(${i+8})">Foto</button><img id="foto${i+8}"></td>
+                    <td><button type="button" onclick="startTimer(${i+8})">Start</button></td>
+                    <td><button type="button" onclick="stopTimer(${i+8})">Stop</button></td>
+                    <td><span id="cronometro${i+8}_1">0:00</span></td>
+                    <td><span id="cronometro${i+8}_2">0:00</span></td>
+                    <td><span id="cronometro${i+8}_3">0:00</span></td>
+                    <td><span id="cronometro${i+8}_4">0:00</span></td>
+                    <td><span id="cronometro${i+8}_5">0:00</span></td>
+                    <td><span id="somaTempo${i+8}">0:00</span></td>
+                    <td><input type="text" placeholder="Sugestões de melhoria"></td>
+                </tr>
+              <tr>
+                    <td><input type="text" id="atividade${i+9}" placeholder="Descreva a atividade"></td>
+                    <td><button type="button" onclick="capturePhoto(${i+9})">Foto</button><img id="foto${i+9}"></td>
+                    <td><button type="button" onclick="startTimer(${i+9})">Start</button></td>
+                    <td><button type="button" onclick="stopTimer(${i+9})">Stop</button></td>
+                    <td><span id="cronometro${i+9}_1">0:00</span></td>
+                    <td><span id="cronometro${i+9}_2">0:00</span></td>
+                    <td><span id="cronometro${i+9}_3">0:00</span></td>
+                    <td><span id="cronometro${i+9}_4">0:00</span></td>
+                    <td><span id="cronometro${i+9}_5">0:00</span></td>
+                    <td><span id="somaTempo${i+9}">0:00</span></td>
+                    <td><input type="text" placeholder="Sugestões de melhoria"></td>
+                </tr>
+              <tr>
+                    <td><input type="text" id="atividade${i+10}" placeholder="Descreva a atividade"></td>
+                    <td><button type="button" onclick="capturePhoto(${i+10})">Foto</button><img id="foto${i+10}"></td>
+                    <td><button type="button" onclick="startTimer(${i+10})">Start</button></td>
+                    <td><button type="button" onclick="stopTimer(${i+10})">Stop</button></td>
+                    <td><span id="cronometro${i+10}_1">0:00</span></td>
+                    <td><span id="cronometro${i+10}_2">0:00</span></td>
+                    <td><span id="cronometro${i+10}_3">0:00</span></td>
+                    <td><span id="cronometro${i+10}_4">0:00</span></td>
+                    <td><span id="cronometro${i+10}_5">0:00</span></td>
+                    <td><span id="somaTempo${i+10}">0:00</span></td>
+                    <td><input type="text" placeholder="Sugestões de melhoria"></td>
+                </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    </form>
 
-  <div class="container" id="step1">
-    <h2>Informações do Imóvel</h2>
-    <label for="totalValue">Valor Total do Imóvel:</label>
-    <input type="number" id="totalValue" oninput="saveData()">
+    <!-- Botão para gerar o gráfico -->
+    <button onclick="generateDashboard()">Gerar Dashboard</button>
 
-    <label for="downPayment">Valor da Entrada:</label>
-    <input type="number" id="downPayment" oninput="saveData()">
+    <!-- Container para o gráfico -->
+    <div id="chartContainer">
+        <canvas id="chart"></canvas>
+    </div>
 
-    <label for="amortization">Valor da Amortização:</label>
-    <input type="number" id="amortization">
+    <script>
+        const timers = Array(10).fill().map(() => [0, 0, 0, 0, 0]);
+        const timerIntervals = Array(10).fill().map(() => [null, null, null, null, null]);
+        let currentTimer = Array(10).fill(0);
 
-    <button onclick="addAmortization()">Adicionar Amortização</button>
-
-    <ul class="amortization-list" id="amortizationList"></ul>
-
-    <button onclick="updateInstallmentList()">Atualizar Parcelas</button>
-  </div>
-
-  <div class="container" id="step2">
-    <h2>Número de Parcelas</h2>
-    <div class="checkbox-group" id="installmentList"></div>
-  </div>
-
-  <div class="container" id="step3">
-    <h2>Resultado</h2>
-    <p id="result"></p>
-
-    <button onclick="calculate()">Calcular</button>
-  </div>
-
-  <script>
-    const numInstallments = 48;
-    const installmentValue = 1050;
-    let totalValue, downPayment;
-    let amortizations = [];
-
-    document.addEventListener('DOMContentLoaded', (event) => {
-      loadSavedData();
-      updateInstallmentList();
-    });
-
-    function saveData() {
-      totalValue = parseFloat(document.getElementById('totalValue').value) || 0;
-      downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
-
-      let installmentsPaid = [];
-      for (let i = 1; i <= numInstallments; i++) {
-        if (document.getElementById(`installment${i}`).checked) {
-          installmentsPaid.push(i);
+        function startTimer(row) {
+            if (currentTimer[row - 1] < 5) {
+                const timerIndex = currentTimer[row - 1];
+                if (!timerIntervals[row - 1][timerIndex]) {
+                    timerIntervals[row - 1][timerIndex] = setInterval(() => {
+                        timers[row - 1][timerIndex]++;
+                        document.getElementById(`cronometro${row}_${timerIndex + 1}`).textContent = formatTime(timers[row - 1][timerIndex]);
+                        updateSum(row);
+                    }, 1000);
+                }
+            }
         }
-      }
 
-      const data = {
-        totalValue: totalValue,
-        downPayment: downPayment,
-        amortizations: amortizations,
-        installmentsPaid: installmentsPaid
-      };
-
-      localStorage.setItem('imovelData', JSON.stringify(data));
-    }
-
-    function loadSavedData() {
-      const data = JSON.parse(localStorage.getItem('imovelData'));
-      if (data) {
-        document.getElementById('totalValue').value = data.totalValue || '';
-        document.getElementById('downPayment').value = data.downPayment || '';
-        amortizations = data.amortizations || [];
-        updateAmortizationList();
-
-        setTimeout(() => {
-          data.installmentsPaid.forEach((i) => {
-            document.getElementById(`installment${i}`).checked = true;
-          });
-        }, 100); // Delay to ensure checkboxes are created before setting their state
-      }
-    }
-
-    function updateInstallmentList() {
-      totalValue = parseFloat(document.getElementById('totalValue').value) || 0;
-      downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
-
-      if (totalValue <= 0 || downPayment < 0 || downPayment >= totalValue) {
-        alert("Por favor, insira valores válidos.");
-        return;
-      }
-
-      let installmentList = document.getElementById('installmentList');
-      installmentList.innerHTML = '';
-      for (let i = 1; i <= numInstallments; i++) {
-        let div = document.createElement('div');
-        let checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `installment${i}`;
-        checkbox.value = i;
-        checkbox.addEventListener('change', saveData);
-        div.appendChild(checkbox);
-
-        let label = document.createElement('label');
-        label.htmlFor = `installment${i}`;
-        label.innerText = `${i}`;
-        div.appendChild(label);
-
-        installmentList.appendChild(div);
-      }
-
-      saveData();
-    }
-
-    function addAmortization() {
-      let amortization = parseFloat(document.getElementById('amortization').value);
-      if (isNaN(amortization) || amortization <= 0) {
-        alert("Por favor, insira um valor de amortização válido.");
-        return;
-      }
-
-      amortizations.push(amortization);
-      document.getElementById('amortization').value = '';
-      updateAmortizationList();
-      saveData();
-    }
-
-    function removeAmortization(index) {
-      amortizations.splice(index, 1);
-      updateAmortizationList();
-      saveData();
-    }
-
-    function updateAmortizationList() {
-      let amortizationList = document.getElementById('amortizationList');
-      amortizationList.innerHTML = '';
-      amortizations.forEach((amortization, index) => {
-        let li = document.createElement('li');
-        li.innerText = `Amortização ${index + 1}: R$ ${amortization.toFixed(2)}`;
-
-        let deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-btn';
-        deleteBtn.innerText = 'Excluir';
-        deleteBtn.onclick = () => removeAmortization(index);
-        li.appendChild(deleteBtn);
-
-        amortizationList.appendChild(li);
-      });
-    }
-
-    function calculate() {
-      let installmentsPaid = [];
-      for (let i = 1; i <= numInstallments; i++) {
-        if (document.getElementById(`installment${i}`).checked) {
-          installmentsPaid.push(i);
+        function stopTimer(row) {
+            if (currentTimer[row - 1] < 5 && timerIntervals[row - 1][currentTimer[row - 1]]) {
+                clearInterval(timerIntervals[row - 1][currentTimer[row - 1]]);
+                timerIntervals[row - 1][currentTimer[row - 1]] = null;
+                currentTimer[row - 1]++;
+            }
         }
-      }
 
-      let totalAmortization = amortizations.reduce((a, b) => a + b, 0);
-      let totalPaid = installmentsPaid.length * installmentValue;
-      let remainingDebt = totalValue - downPayment - totalPaid - totalAmortization;
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
 
-      document.getElementById('result').innerText = `
-                Valor Total Pago: R$ ${(totalPaid + downPayment + totalAmortization).toFixed(2)}
-                \nSaldo Devedor: R$ ${remainingDebt.toFixed(2)}
-            `;
+        function updateSum(row) {
+            const total = timers[row - 1].reduce((a, b) => a + b, 0);
+            document.getElementById(`somaTempo${row}`).textContent = formatTime(total);
+        }
 
-      saveData();
-    }
-  </script>
+        function capturePhoto(row) {
+            const fotoElement = document.getElementById(`foto${row}`);
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    fotoElement.style.display = 'block';
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
+                    setTimeout(() => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        canvas.getContext('2d').drawImage(video, 0, 0);
+                        fotoElement.src = canvas.toDataURL('image/png');
+                        stream.getTracks().forEach(track => track.stop());
+                    }, 2000);
+                })
+                .catch((err) => {
+                    alert('Erro ao acessar a câmera: ' + err);
+                });
+        }
+
+        function generateDashboard() {
+            const activities = [];
+            const times = [];
+
+            for (let i = 1; i <= 10; i++) {
+                const activity = document.getElementById(`atividade${i}`);
+                if (activity && activity.value) {
+                    const totalSeconds = timers[i - 1].reduce((a, b) => a + b, 0);
+                    const totalTime = totalSeconds / 60; // Convertendo para minutos
+                    activities.push(activity.value);
+                    times.push(totalTime);
+                }
+            }
+
+            const ctx = document.getElementById('chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: activities,
+                    datasets: [{
+                        label: 'Tempo Médio das Atividades (minutos)',
+                        data: times,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 </body>
-
 </html>
