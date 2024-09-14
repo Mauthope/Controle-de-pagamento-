@@ -63,10 +63,12 @@
   <!-- Resumo das informações -->
   <div id="resumo">
     <p>Entrada: R$ 15.000</p>
+    <p>Valor à Vista: R$ 54.900</p>
+    <p>Total Financiado: R$ 39.900</p>
     <p>Total de Parcelas: 48</p>
-    <p>Valor da Parcela: R$ 1.050</p>
+    <p>Valor da Parcela: R$ 1.050,72</p>
     <p>Total Pago: <span id="totalPago">R$ 0,00</span></p>
-    <p>Valor Restante: <span id="restante">R$ 50.400,00</span></p>
+    <p>Valor Restante: <span id="restante">R$ 39.900,00</span></p>
   </div>
   
   <!-- Simulação de amortizações -->
@@ -80,15 +82,23 @@
 
   <script>
     // Variáveis globais
-    const valorParcela = 1050;
+    const valorParcela = 1050.72;
     const parcelasTotais = 48;
+    const valorFinanciado = 39900;
+    const taxaJuros = 0.005; // Taxa de juros mensal (exemplo: 0.5%)
+    let saldoDevedor = parseFloat(localStorage.getItem('saldoDevedor')) || valorFinanciado;
     let parcelasPagas = JSON.parse(localStorage.getItem('parcelasPagas')) || [];
     let totalAmortizado = parseFloat(localStorage.getItem('totalAmortizado')) || 0;
 
-    // Função para calcular o valor restante
+    // Função para calcular o valor restante com juros
+    function calcularJuros() {
+      saldoDevedor += saldoDevedor * taxaJuros; // Juros sobre o saldo devedor
+    }
+
+    // Função para atualizar o resumo
     function atualizarResumo() {
       const totalPago = parcelasPagas.length * valorParcela + totalAmortizado;
-      const restante = (parcelasTotais * valorParcela) - totalPago;
+      const restante = saldoDevedor - totalPago;
 
       document.getElementById('totalPago').innerText = `R$ ${totalPago.toFixed(2)}`;
       document.getElementById('restante').innerText = `R$ ${restante.toFixed(2)}`;
@@ -100,13 +110,15 @@
       const valor = parseFloat(document.getElementById('valorAmortizacao').value);
       if (!isNaN(valor) && valor > 0) {
         totalAmortizado += valor;
+        saldoDevedor -= valor; // Reduz saldo devedor com amortização
         localStorage.setItem('totalAmortizado', totalAmortizado);
+        localStorage.setItem('saldoDevedor', saldoDevedor);
         atualizarResumo();
         document.getElementById('valorAmortizacao').value = '';
       }
     }
 
-    // Função para criar os botões de parcela
+    // Função para criar os botões de parcelas
     function criarBotoesParcelas() {
       const container = document.getElementById('parcelas');
       for (let i = 1; i <= parcelasTotais; i++) {
@@ -126,6 +138,7 @@
             parcelasPagas = parcelasPagas.filter(p => p !== i);
           } else {
             // Marcar como paga
+            calcularJuros(); // Aplica juros ao saldo antes de pagar
             botao.classList.add('paga');
             parcelasPagas.push(i);
           }
