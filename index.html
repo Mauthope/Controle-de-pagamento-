@@ -126,26 +126,16 @@
     const valorParcela = 1050.72;
     const parcelasTotais = 48;
     const valorFinanciado = 39900;
-    const taxaJuros = 0.005; // Taxa de juros mensal (0.5% ao mês)
+    const valorTotalComJuros = parcelasTotais * valorParcela;
     let saldoDevedor = parseFloat(localStorage.getItem('saldoDevedor')) || valorFinanciado;
     let parcelasPagas = JSON.parse(localStorage.getItem('parcelasPagas')) || [];
     let totalAmortizado = parseFloat(localStorage.getItem('totalAmortizado')) || 0;
     let amortizacoes = JSON.parse(localStorage.getItem('amortizacoes')) || [];
 
-    // Função para calcular os juros sobre o saldo devedor
-    function calcularJuros(saldo) {
-      return saldo * taxaJuros;
-    }
-
-    // Função para calcular o saldo devedor
+    // Função para calcular o saldo devedor com base nas amortizações e parcelas pagas
     function calcularSaldoDevedor() {
       const totalPago = parcelasPagas.length * valorParcela + totalAmortizado;
-      let saldoAtual = saldoDevedor;
-      
-      // Aplicar juros sobre o saldo devedor restante
-      saldoAtual += calcularJuros(saldoAtual);
-
-      return saldoAtual - totalPago;
+      return valorFinanciado - totalPago;
     }
 
     // Função para atualizar o resumo
