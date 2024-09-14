@@ -126,21 +126,32 @@
     const valorParcela = 1050.72;
     const parcelasTotais = 48;
     const valorFinanciado = 39900;
-    const taxaJuros = 0.005; // Taxa de juros mensal (exemplo: 0.5%)
+    const taxaJuros = 0.005; // Taxa de juros mensal (0.5% ao mês)
     let saldoDevedor = parseFloat(localStorage.getItem('saldoDevedor')) || valorFinanciado;
     let parcelasPagas = JSON.parse(localStorage.getItem('parcelasPagas')) || [];
     let totalAmortizado = parseFloat(localStorage.getItem('totalAmortizado')) || 0;
     let amortizacoes = JSON.parse(localStorage.getItem('amortizacoes')) || [];
 
-    // Função para calcular o valor restante com juros
-    function calcularJuros() {
-      saldoDevedor += saldoDevedor * taxaJuros; // Juros sobre o saldo devedor
+    // Função para calcular os juros sobre o saldo devedor
+    function calcularJuros(saldo) {
+      return saldo * taxaJuros;
+    }
+
+    // Função para calcular o saldo devedor
+    function calcularSaldoDevedor() {
+      const totalPago = parcelasPagas.length * valorParcela + totalAmortizado;
+      let saldoAtual = saldoDevedor;
+      
+      // Aplicar juros sobre o saldo devedor restante
+      saldoAtual += calcularJuros(saldoAtual);
+
+      return saldoAtual - totalPago;
     }
 
     // Função para atualizar o resumo
     function atualizarResumo() {
       const totalPago = parcelasPagas.length * valorParcela + totalAmortizado;
-      const restante = saldoDevedor - totalPago;
+      const restante = calcularSaldoDevedor();
 
       document.getElementById('totalPago').innerText = `R$ ${totalPago.toFixed(2)}`;
       document.getElementById('restante').innerText = `R$ ${restante.toFixed(2)}`;
@@ -205,26 +216,32 @@
           botao.classList.add('paga');
         }
 
+        // Adiciona o evento de clique
         botao.addEventListener('click', () => {
-          if (botao.classList.contains('paga')) {
-            // Remover parcela paga
-            botao.classList.remove('paga');
-            parcelasPagas = parcelasPagas.filter(p => p !== i);
-          } else {
-            // Marcar como paga
-            calcularJuros(); // Aplica juros ao saldo antes de pagar
-            botao.classList.add('paga');
-            parcelasPagas.push(i);
-          }
-          localStorage.setItem('parcelasPagas', JSON.stringify(parcelasPagas));
-          atualizarResumo();
+          toggleParcelaPaga(i, botao);
         });
 
         container.appendChild(botao);
       }
     }
 
-    // Função para limpar o localStorage e reiniciar a aplicação
+    // Função para alternar o status de uma parcela (paga/não paga)
+    function toggleParcelaPaga(numeroParcela, botao) {
+      const index = parcelasPagas.indexOf(numeroParcela);
+
+      if (index === -1) {
+        parcelasPagas.push(numeroParcela);
+        botao.classList.add('paga');
+      } else {
+        parcelasPagas.splice(index, 1);
+        botao.classList.remove('paga');
+      }
+
+      localStorage.setItem('parcelasPagas', JSON.stringify(parcelasPagas));
+      atualizarResumo();
+    }
+
+    // Função para limpar o localStorage e recarregar a página
     function limparTudo() {
       if (confirm('Tem certeza que deseja limpar todos os dados?')) {
         localStorage.clear();
@@ -232,10 +249,10 @@
       }
     }
 
-    // Inicializa o app
+    // Inicializa a aplicação
     criarBotoesParcelas();
     atualizarResumo();
-    atualizarListaAmortizacoes(); // Atualiza a lista de amortizações ao carregar
+    atualizarListaAmortizacoes();
   </script>
 </body>
 </html>
