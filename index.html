@@ -52,6 +52,32 @@
       background-color: darkblue;
     }
 
+    .amortizacao-lista {
+      margin-top: 10px;
+    }
+
+    .amortizacao-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      padding: 5px;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+    }
+
+    .amortizacao-item span {
+      margin-right: 10px;
+    }
+
+    .amortizacao-item button {
+      background-color: red;
+    }
+
+    .amortizacao-item button:hover {
+      background-color: darkred;
+    }
+
   </style>
 </head>
 <body>
@@ -78,6 +104,9 @@
     <input type="number" id="valorAmortizacao" min="0" placeholder="Digite o valor">
     <button onclick="adicionarAmortizacao()">Adicionar Amortização</button>
     <p>Total Amortizado: <span id="totalAmortizado">R$ 0,00</span></p>
+
+    <!-- Lista de amortizações -->
+    <div id="listaAmortizacoes" class="amortizacao-lista"></div>
   </div>
 
   <script>
@@ -89,6 +118,7 @@
     let saldoDevedor = parseFloat(localStorage.getItem('saldoDevedor')) || valorFinanciado;
     let parcelasPagas = JSON.parse(localStorage.getItem('parcelasPagas')) || [];
     let totalAmortizado = parseFloat(localStorage.getItem('totalAmortizado')) || 0;
+    let amortizacoes = JSON.parse(localStorage.getItem('amortizacoes')) || [];
 
     // Função para calcular o valor restante com juros
     function calcularJuros() {
@@ -109,13 +139,45 @@
     function adicionarAmortizacao() {
       const valor = parseFloat(document.getElementById('valorAmortizacao').value);
       if (!isNaN(valor) && valor > 0) {
+        amortizacoes.push(valor);
         totalAmortizado += valor;
         saldoDevedor -= valor; // Reduz saldo devedor com amortização
         localStorage.setItem('totalAmortizado', totalAmortizado);
         localStorage.setItem('saldoDevedor', saldoDevedor);
+        localStorage.setItem('amortizacoes', JSON.stringify(amortizacoes));
         atualizarResumo();
         document.getElementById('valorAmortizacao').value = '';
+        atualizarListaAmortizacoes(); // Atualiza a lista de amortizações
       }
+    }
+
+    // Função para excluir amortização
+    function excluirAmortizacao(index) {
+      const valor = amortizacoes[index];
+      totalAmortizado -= valor;
+      saldoDevedor += valor; // Reverte o saldo devedor
+      amortizacoes.splice(index, 1); // Remove a amortização da lista
+      localStorage.setItem('totalAmortizado', totalAmortizado);
+      localStorage.setItem('saldoDevedor', saldoDevedor);
+      localStorage.setItem('amortizacoes', JSON.stringify(amortizacoes));
+      atualizarResumo();
+      atualizarListaAmortizacoes();
+    }
+
+    // Função para atualizar a lista de amortizações
+    function atualizarListaAmortizacoes() {
+      const lista = document.getElementById('listaAmortizacoes');
+      lista.innerHTML = '';
+
+      amortizacoes.forEach((valor, index) => {
+        const item = document.createElement('div');
+        item.classList.add('amortizacao-item');
+        item.innerHTML = `
+          <span>R$ ${valor.toFixed(2)}</span>
+          <button onclick="excluirAmortizacao(${index})">Excluir</button>
+        `;
+        lista.appendChild(item);
+      });
     }
 
     // Função para criar os botões de parcelas
@@ -153,6 +215,7 @@
     // Inicializa o app
     criarBotoesParcelas();
     atualizarResumo();
+    atualizarListaAmortizacoes(); // Atualiza a lista de amortizações ao carregar
   </script>
 </body>
 </html>
