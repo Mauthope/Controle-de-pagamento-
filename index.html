@@ -3,252 +3,247 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Pagamento de Terreno</title>
+  <title>Controle de Financiamento do Terreno</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    #parcelas {
       margin: 20px;
-    }
-
-    .parcela {
-      width: 40px;
-      height: 40px;
-      margin: 5px;
-      background-color: red;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .parcela.paga {
-      background-color: green;
-    }
-
-    #resumo {
-      margin-top: 20px;
-    }
-
-    #amortizacao {
-      margin-top: 20px;
-    }
-
-    input[type="number"] {
-      width: 200px;
-      padding: 5px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     button {
-      padding: 5px 10px;
-      cursor: pointer;
+      padding: 10px 15px;
+      margin: 5px;
       border: none;
       border-radius: 5px;
-      background-color: blue;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button.pago {
+      background-color: green;
       color: white;
-      margin-left: 10px;
     }
 
-    button:hover {
-      background-color: darkblue;
+    button.nao-pago {
+      background-color: red;
+      color: white;
     }
 
-    .amortizacao-lista {
-      margin-top: 10px;
+    #resumo, #amortizacao {
+      margin: 20px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #resumo p, #amortizacao p {
+      font-size: 18px;
+      color: #333;
+    }
+
+    #amortizacao input {
+      width: calc(100% - 110px);
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    #amortizacao button {
+      background-color: #007bff;
+      color: white;
+    }
+
+    #amortizacao button:hover {
+      background-color: #0056b3;
+    }
+
+    #limpar {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    #limpar:hover {
+      background-color: #c82333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 15px;
     }
 
     .amortizacao-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 5px;
-      padding: 5px;
-      background-color: #f1f1f1;
+      background-color: #f9f9f9;
+      margin-bottom: 10px;
+      padding: 10px;
       border-radius: 5px;
-    }
-
-    .amortizacao-item span {
-      margin-right: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .amortizacao-item button {
-      background-color: red;
+      background-color: #dc3545;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
     }
 
     .amortizacao-item button:hover {
-      background-color: darkred;
-    }
-
-    #limparBtn {
-      margin-top: 20px;
-      background-color: orange;
-    }
-
-    #limparBtn:hover {
-      background-color: darkorange;
+      background-color: #c82333;
     }
 
   </style>
 </head>
 <body>
-  <h1>Controle de Pagamento de Terreno</h1>
-  
-  <!-- Área dos botões de parcelas -->
-  <div id="parcelas"></div>
-  
-  <!-- Resumo das informações -->
-  <div id="resumo">
-    <p>Entrada: R$ 15.000</p>
-    <p>Valor à Vista: R$ 54.900</p>
-    <p>Total Financiado: R$ 39.900</p>
-    <p>Total de Parcelas: 48</p>
-    <p>Valor da Parcela: R$ 1.050,72</p>
-    <p>Total Pago: <span id="totalPago">R$ 0,00</span></p>
-    <p>Valor Restante: <span id="restante">R$ 39.900,00</span></p>
-    <p>Juros Totais: R$ 10.535,04</p>
-  </div>
-  
-  <!-- Simulação de amortizações -->
-  <div id="amortizacao">
-    <h2>Simulação de Amortizações</h2>
-    <label for="valorAmortizacao">Valor da Amortização: </label>
-    <input type="number" id="valorAmortizacao" min="0" placeholder="Digite o valor">
-    <button onclick="adicionarAmortizacao()">Adicionar Amortização</button>
-    <p>Total Amortizado: <span id="totalAmortizado">R$ 0,00</span></p>
 
-    <!-- Lista de amortizações -->
-    <div id="listaAmortizacoes" class="amortizacao-lista"></div>
-  </div>
+  <div class="container">
+    <h1>Controle de Financiamento do Terreno</h1>
 
-  <!-- Botão para limpar o armazenamento local -->
-  <button id="limparBtn" onclick="limparTudo()">Limpar Tudo</button>
+    <div id="parcelas">
+      <h2>Parcelas</h2>
+      <div id="botoesParcelas"></div>
+    </div>
+
+    <div id="amortizacao">
+      <h2>Amortização</h2>
+      <input type="number" id="valorAmortizacao" placeholder="Valor da amortização">
+      <button onclick="amortizar()">Amortizar</button>
+      <div id="listaAmortizacoes"></div>
+    </div>
+
+    <div id="resumo">
+      <h2>Resumo</h2>
+      <p>Total Pago: R$ <span id="totalPago">0,00</span></p>
+      <p>Saldo Restante: R$ <span id="saldoRestante">50434,56</span></p>
+      <p>Juros Economizados com Amortização: R$ <span id="jurosEconomizados">0,00</span></p>
+      <button id="limpar" onclick="limparTudo()">Limpar Dados</button>
+    </div>
+  </div>
 
   <script>
-    // Variáveis globais
-    const valorParcela = 1050.72;
-    const parcelasTotais = 48;
-    const valorFinanciado = 39900;
-    const valorTotalComJuros = parcelasTotais * valorParcela;
-    const jurosTotais = valorTotalComJuros - valorFinanciado;
-    let saldoDevedor = parseFloat(localStorage.getItem('saldoDevedor')) || valorFinanciado;
-    let parcelasPagas = JSON.parse(localStorage.getItem('parcelasPagas')) || [];
-    let totalAmortizado = parseFloat(localStorage.getItem('totalAmortizado')) || 0;
+    let saldoRestante = parseFloat(localStorage.getItem('saldoRestante')) || 50434.56;
+    let totalPago = parseFloat(localStorage.getItem('totalPago')) || 0;
+    let jurosEconomizados = parseFloat(localStorage.getItem('jurosEconomizados')) || 0;
     let amortizacoes = JSON.parse(localStorage.getItem('amortizacoes')) || [];
 
-    // Função para calcular o saldo devedor com base nas amortizações e parcelas pagas
-    function calcularSaldoDevedor() {
-      const totalPago = parcelasPagas.length * valorParcela + totalAmortizado;
-      return valorFinanciado - totalPago;
-    }
+    const valorParcela = 1050.72;
+    const valorFinanciado = 39900;
+    const parcelas = 48;
 
-    // Função para calcular a taxa de juros mensal
-    function calcularJurosMensal() {
-      return jurosTotais / parcelasTotais;
-    }
+    const taxaJuros = (50434.56 - valorFinanciado) / valorFinanciado;
 
-    // Função para atualizar o resumo
     function atualizarResumo() {
-      const totalPago = parcelasPagas.length * valorParcela + totalAmortizado;
-      const restante = calcularSaldoDevedor();
+      document.getElementById('saldoRestante').innerText = saldoRestante.toFixed(2);
+      document.getElementById('totalPago').innerText = totalPago.toFixed(2);
+      document.getElementById('jurosEconomizados').innerText = jurosEconomizados.toFixed(2);
 
-      document.getElementById('totalPago').innerText = `R$ ${totalPago.toFixed(2)}`;
-      document.getElementById('restante').innerText = `R$ ${restante.toFixed(2)}`;
-      document.getElementById('totalAmortizado').innerText = `R$ ${totalAmortizado.toFixed(2)}`;
+      localStorage.setItem('saldoRestante', saldoRestante);
+      localStorage.setItem('totalPago', totalPago);
+      localStorage.setItem('jurosEconomizados', jurosEconomizados);
+      localStorage.setItem('amortizacoes', JSON.stringify(amortizacoes));
     }
 
-    // Função para adicionar amortização
-    function adicionarAmortizacao() {
-      const valor = parseFloat(document.getElementById('valorAmortizacao').value);
-      if (!isNaN(valor) && valor > 0) {
-        amortizacoes.push(valor);
-        totalAmortizado += valor;
-        saldoDevedor -= valor; // Reduz saldo devedor com amortização
-        localStorage.setItem('totalAmortizado', totalAmortizado);
-        localStorage.setItem('saldoDevedor', saldoDevedor);
-        localStorage.setItem('amortizacoes', JSON.stringify(amortizacoes));
-        atualizarResumo();
-        document.getElementById('valorAmortizacao').value = '';
-        atualizarListaAmortizacoes(); // Atualiza a lista de amortizações
+    function criarBotoesParcelas() {
+      const botoesContainer = document.getElementById('botoesParcelas');
+      botoesContainer.innerHTML = '';
+
+      for (let i = 1; i <= parcelas; i++) {
+        const botao = document.createElement('button');
+        botao.innerText = `Parcela ${i}`;
+        botao.className = localStorage.getItem(`parcela_${i}`) === 'pago' ? 'pago' : 'nao-pago';
+        botao.onclick = () => pagarParcela(i, botao);
+        botoesContainer.appendChild(botao);
       }
     }
 
-    // Função para excluir amortização
-    function excluirAmortizacao(index) {
-      const valor = amortizacoes[index];
-      totalAmortizado -= valor;
-      saldoDevedor += valor; // Reverte o saldo devedor
-      amortizacoes.splice(index, 1); // Remove a amortização da lista
-      localStorage.setItem('totalAmortizado', totalAmortizado);
-      localStorage.setItem('saldoDevedor', saldoDevedor);
-      localStorage.setItem('amortizacoes', JSON.stringify(amortizacoes));
-      atualizarResumo();
-      atualizarListaAmortizacoes();
+    function pagarParcela(numeroParcela, botao) {
+      if (localStorage.getItem(`parcela_${numeroParcela}`) !== 'pago') {
+        saldoRestante -= valorParcela;
+        totalPago += valorParcela;
+        localStorage.setItem(`parcela_${numeroParcela}`, 'pago');
+        botao.className = 'pago';
+        atualizarResumo();
+      }
     }
 
-    // Função para atualizar a lista de amortizações
-    function atualizarListaAmortizacoes() {
-      const lista = document.getElementById('listaAmortizacoes');
-      lista.innerHTML = '';
+    function amortizar() {
+      const valorAmortizacao = parseFloat(document.getElementById('valorAmortizacao').value);
 
-      amortizacoes.forEach((valor, index) => {
-        const item = document.createElement('div');
-        item.classList.add('amortizacao-item');
-        item.innerHTML = `
-          <span>R$ ${valor.toFixed(2)}</span>
-          <button onclick="excluirAmortizacao(${index})">Excluir</button>
+      if (!isNaN(valorAmortizacao) && valorAmortizacao > 0) {
+        const valorAmortizadoComJuros = valorAmortizacao * (1 + taxaJuros);
+        saldoRestante -= valorAmortizadoComJuros;
+        totalPago += valorAmortizacao;
+        jurosEconomizados += valorAmortizadoComJuros - valorAmortizacao;
+
+        amortizacoes.push({ valor: valorAmortizacao, id: Date.now() });
+        atualizarAmortizacoes();
+        atualizarResumo();
+        document.getElementById('valorAmortizacao').value = '';
+      } else {
+        alert('Por favor, insira um valor válido para amortização.');
+      }
+    }
+
+    function atualizarAmortizacoes() {
+      const listaAmortizacoes = document.getElementById('listaAmortizacoes');
+      listaAmortizacoes.innerHTML = '';
+
+      amortizacoes.forEach((amortizacao) => {
+        const div = document.createElement('div');
+        div.className = 'amortizacao-item';
+        div.innerHTML = `
+          <span>Amortizado: R$ ${amortizacao.valor.toFixed(2)}</span>
+          <button onclick="excluirAmortizacao(${amortizacao.id})">Excluir</button>
         `;
-        lista.appendChild(item);
+        listaAmortizacoes.appendChild(div);
       });
     }
 
-    // Função para criar os botões de parcelas
-    function criarBotoesParcelas() {
-      const container = document.getElementById('parcelas');
-      for (let i = 1; i <= parcelasTotais; i++) {
-        const botao = document.createElement('button');
-        botao.classList.add('parcela');
-        botao.innerText = i;
+    function excluirAmortizacao(id) {
+      const amortizacao = amortizacoes.find(a => a.id === id);
+      if (amortizacao) {
+        const valorAmortizadoComJuros = amortizacao.valor * (1 + taxaJuros);
+        saldoRestante += valorAmortizadoComJuros;
+        totalPago -= amortizacao.valor;
+        jurosEconomizados -= valorAmortizadoComJuros - amortizacao.valor;
 
-        // Verifica se a parcela já foi paga
-        if (parcelasPagas.includes(i)) {
-          botao.classList.add('paga');
-        }
-
-        botao.addEventListener('click', () => {
-          toggleParcelaPaga(i, botao);
-        });
-
-        container.appendChild(botao);
+        amortizacoes = amortizacoes.filter(a => a.id !== id);
+        atualizarAmortizacoes();
+        atualizarResumo();
       }
     }
 
-    // Função para alternar o status de uma parcela (paga/não paga)
-    function toggleParcelaPaga(numeroParcela, botao) {
-      const index = parcelasPagas.indexOf(numeroParcela);
-
-      if (index === -1) {
-        parcelasPagas.push(numeroParcela);
-        botao.classList.add('paga');
-      } else {
-        parcelasPagas.splice(index, 1);
-        botao.classList.remove('paga');
-      }
-
-      localStorage.setItem('parcelasPagas', JSON.stringify(parcelasPagas));
-      atualizarResumo();
-    }
-
-    // Função para limpar o localStorage e recarregar a página
     function limparTudo() {
       if (confirm('Tem certeza que deseja limpar todos os dados?')) {
         localStorage.clear();
-        location.reload(); // Recarrega a página para redefinir o estado
+        location.reload();
       }
     }
 
-    // Inicializa a aplicação
     criarBotoesParcelas();
     atualizarResumo();
-    atualizarListaAmortizacoes();
+    atualizarAmortizacoes();
   </script>
+
 </body>
 </html>
